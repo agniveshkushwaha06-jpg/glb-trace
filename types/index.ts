@@ -23,10 +23,13 @@ export type Item = {
   item_date: string;
   image_url: string | null;
   status: ItemStatus;
+  verification_question: string | null;
   reported_by: string;
   created_at: string;
 };
 
 export type ItemWithReporter = Item & {
-  reporter: Pick<Profile, "id" | "name" | "year" | "section" | "phone" | "email"> | null;
+  reporter: Pick<Profile, "id" | "name" | "year" | "section"> | null;
 };
+
+export type ClaimStatus = "pending" | "approved" | "rejected";
