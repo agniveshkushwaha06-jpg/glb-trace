@@ -226,9 +226,9 @@ grant execute on function public.admin_stats() to authenticated;
 grant execute on function public.admin_remove_item(uuid) to authenticated;
 grant execute on function public.admin_list_items() to authenticated;
 
--- Create the public item-images bucket once in Supabase Storage, then run these policies.
+-- Create the public item-images bucket once in Supabase Storage, then run this upload policy.
+-- Public buckets allow file reads by URL; no broad SELECT policy is needed to serve images.
 drop policy if exists "anyone can view images" on storage.objects;
-create policy "anyone can view images" on storage.objects for select using (bucket_id = 'item-images');
 drop policy if exists "authenticated can upload images" on storage.objects;
 create policy "authenticated can upload images" on storage.objects for insert to authenticated
   with check (bucket_id = 'item-images' and (storage.foldername(name))[1] = auth.uid()::text);

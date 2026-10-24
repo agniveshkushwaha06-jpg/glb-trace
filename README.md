@@ -31,7 +31,7 @@ Fill `.env.local`:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_ALLOWED_EMAIL_DOMAIN=glbajajgroup.org
 NEXT_PUBLIC_ENFORCE_EMAIL_DOMAIN=false
 ```
@@ -40,11 +40,12 @@ Set `NEXT_PUBLIC_ENFORCE_EMAIL_DOMAIN=true` to require `@glbajajgroup.org` email
 
 ### Supabase
 
-1. Run the full `supabase/schema.sql` in the SQL Editor (it upgrades the earlier starter tables too).
-2. Create a **public** storage bucket named `item-images`.
-3. Enable **Google** in Auth providers.
-4. Add redirect URLs: `http://localhost:3000/auth/callback` and `https://<your-vercel-domain>/auth/callback`.
-5. To enable the admin panel, in SQL Editor set your own email in the private settings list:
+1. Copy your project's URL and publishable key from Supabase → Project Settings → API Keys into `.env.local` (`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`). A legacy anon key also works if your project only shows that option.
+2. Run the full `supabase/schema.sql` in the SQL Editor (it upgrades the earlier starter tables too).
+3. Create a **public** storage bucket named `item-images`, with a **3 MB** file size limit and allowed MIME types `image/jpeg,image/png,image/webp`.
+4. Enable **Google** in Auth providers.
+5. Add redirect URLs: `http://localhost:3000/auth/callback` and `https://<your-vercel-domain>/auth/callback`.
+6. To enable the admin panel, in SQL Editor set your own email in the private settings list:
 
 ```sql
 update public.app_settings set value = '["your-email@gmail.com"]'::jsonb where key = 'admin_emails';
