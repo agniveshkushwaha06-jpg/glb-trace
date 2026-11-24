@@ -2,10 +2,16 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-const PROTECTED_PREFIXES = ["/report", "/my-items", "/profile"];
+const PROTECTED_PREFIXES = ["/report", "/my-items", "/profile", "/activity", "/admin"];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+
+  const pathname = request.nextUrl.pathname;
+  const isProtected = PROTECTED_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+  if (!isProtected) return supabaseResponse;
 
   if (!isSupabaseConfigured()) {
     return supabaseResponse;
@@ -37,12 +43,7 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
-  const pathname = request.nextUrl.pathname;
-  const isProtected = PROTECTED_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  );
-
-  if (isProtected && !user) {
+  if (!user) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     redirectUrl.searchParams.set("next", pathname);

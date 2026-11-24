@@ -39,6 +39,26 @@ export default function LoginPage() {
       return;
     }
     try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      if (!supabaseUrl || !publishableKey) {
+        throw new Error("The sign-in service is not configured. Please contact the project admin.");
+      }
+
+      let health: Response;
+      try {
+        health = await fetch(`${supabaseUrl}/auth/v1/health`, {
+          cache: "no-store",
+          headers: { apikey: publishableKey },
+          signal: AbortSignal.timeout(4000),
+        });
+      } catch {
+        throw new Error("Could not reach the sign-in service. Please try again later or ask the project admin to check Supabase.");
+      }
+      if (!health.ok) {
+        throw new Error("The sign-in service is unavailable right now. Please try again later or ask the project admin to check Supabase.");
+      }
+
       const supabase = createClient();
       const next = searchParams.get("next") ?? "/items";
       const { error: oauthError } = await supabase.auth.signInWithOAuth({

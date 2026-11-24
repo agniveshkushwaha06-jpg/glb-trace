@@ -6,7 +6,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  // Only protected pages need session refresh. Avoid a network auth call on
+  // public pages, static assets, the login page, and the OAuth callback.
+  matcher: ["/report/:path*", "/my-items/:path*", "/profile/:path*", "/activity/:path*", "/admin/:path*"],
 };
